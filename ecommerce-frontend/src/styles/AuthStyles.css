@@ -1,0 +1,69 @@
+.form-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Ensure it takes the full viewport height */
+  width: 100%;
+  flex-direction: column;
+  background-color: #ffdee9;
+  background-image: linear-gradient(0deg, #ffdee9 0%, #b5fffc 100%);
+}
+
+.form-container form {
+  width: 400px;
+  max-width: 100%;
+  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  padding: 30px;
+  background-color: #fff;
+  border-radius: 10px;
+}
+
+.form-container form .title {
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: bold;
+  font-family: "Playfair Display", serif;
+  font-size: 24px;
+}
+
+.form-container form input {
+  width: 100%;
+  border: none;
+  border-bottom: 1px solid #000;
+  margin-bottom: 15px;
+  font-size: 16px;
+  padding: 10px 5px;
+}
+
+.form-container form .btn-group {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.form-container form button,
+.form-container form .btn-secondary {
+  flex: 1;
+  border: 1px solid black;
+  border-radius: 5px;
+  background-color: #000;
+  color: white;
+  padding: 10px 0;
+  text-align: center;
+  cursor: pointer;
+  font-size: 16px;
+  transition: background 0.3s ease;
+}
+
+.form-container form button:hover,
+.form-container form .btn-secondary:hover {
+  background: linear-gradient(to right, #434343, #000000);
+}
+
+.form-container form .btn-secondary {
+  background-color: #434343a4;
+}
+
+.form-container form .btn-secondary:hover {
+  background-color: #434343;
+}
