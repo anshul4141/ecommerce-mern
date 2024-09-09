@@ -7,10 +7,10 @@ import toast from "react-hot-toast";
 import Layout from "./../components/Layout/Layout";
 import { AiOutlineReload } from "react-icons/ai";
 import "../styles/Homepage.css";
+import { useCart } from "../context/cart";
 
 const HomePage = () => {
   const navigate = useNavigate();
-  // const [cart, setCart] = use
   const [products, setProducts] = useState([]);
   const [categories, setCategories] = useState([]);
   const [checked, setChecked] = useState([]);
@@ -18,11 +18,14 @@ const HomePage = () => {
   const [total, setTotal] = useState(0);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
+  const [cart, setCart] = useCart();
 
-  //get all cat
+  //get all categories
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/category/get-categories`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/category/get-categories`
+      );
       if (data?.success) {
         setCategories(data?.category);
       }
@@ -35,11 +38,14 @@ const HomePage = () => {
     getAllCategory();
     getTotal();
   }, []);
+
   //get products
   const getAllProducts = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/product/product-list/${page}`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/product/product-list/${page}`
+      );
       setLoading(false);
       setProducts(data.products);
     } catch (error) {
@@ -48,10 +54,12 @@ const HomePage = () => {
     }
   };
 
-  //getTOtal COunt
+  //get total count
   const getTotal = async () => {
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/product/product-count`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/product/product-count`
+      );
       setTotal(data?.total);
     } catch (error) {
       console.log(error);
@@ -62,11 +70,14 @@ const HomePage = () => {
     if (page === 1) return;
     loadMore();
   }, [page]);
+
   //load more
   const loadMore = async () => {
     try {
       setLoading(true);
-      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/product/product-list/${page}`);
+      const { data } = await axios.get(
+        `${process.env.REACT_APP_API}/api/product/product-list/${page}`
+      );
       setLoading(false);
       setProducts([...products, ...data?.products]);
     } catch (error) {
@@ -75,7 +86,7 @@ const HomePage = () => {
     }
   };
 
-  // filter by cat
+  //filter by category
   const handleFilter = (value, id) => {
     let all = [...checked];
     if (value) {
@@ -85,6 +96,7 @@ const HomePage = () => {
     }
     setChecked(all);
   };
+
   useEffect(() => {
     if (!checked.length || !radio.length) getAllProducts();
   }, [checked.length, radio.length]);
@@ -93,20 +105,24 @@ const HomePage = () => {
     if (checked.length || radio.length) filterProduct();
   }, [checked, radio]);
 
-  //get filterd product
+  //get filtered products
   const filterProduct = async () => {
     try {
-      const { data } = await axios.post(`${process.env.REACT_APP_API}/api/product/product-filters`, {
-        checked,
-        radio,
-      });
+      const { data } = await axios.post(
+        `${process.env.REACT_APP_API}/api/product/product-filters`,
+        {
+          checked,
+          radio,
+        }
+      );
       setProducts(data?.products);
     } catch (error) {
       console.log(error);
     }
   };
+
   return (
-    <Layout title={"ALl Products - Best offers "}>
+    <Layout title={"All Products - Best offers "}>
       {/* banner image */}
       <img
         src="/images/banner.png"
@@ -162,9 +178,9 @@ const HomePage = () => {
                   <div className="card-name-price">
                     <h5 className="card-title">{p.name}</h5>
                     <h5 className="card-title card-price">
-                      {p.price.toLocaleString("en-US", {
+                      {p.price.toLocaleString("en-IN", {
                         style: "currency",
-                        currency: "USD",
+                        currency: "INR",
                       })}
                     </h5>
                   </div>
@@ -178,19 +194,12 @@ const HomePage = () => {
                     >
                       More Details
                     </button>
-                    {/* <button
-                      className="btn btn-dark ms-1"
-                      onClick={() => {
-                        setCart([...cart, p]);
-                        localStorage.setItem(
-                          "cart",
-                          JSON.stringify([...cart, p])
-                        );
-                        toast.success("Item Added to cart");
-                      }}
-                    >
-                      ADD TO CART
-                    </button> */}
+                    <button class="btn btn-secondary ms-1" onClick={() =>{
+                      setCart([...cart,p])
+                      toast.success('Item Added to cart');
+                      }}>
+                      Add To Cart
+                    </button>
                   </div>
                 </div>
               </div>
@@ -209,8 +218,7 @@ const HomePage = () => {
                   "Loading ..."
                 ) : (
                   <>
-                    {" "}
-                    Loadmore <AiOutlineReload />
+                    Load more <AiOutlineReload />
                   </>
                 )}
               </button>
