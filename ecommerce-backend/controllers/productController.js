@@ -186,6 +186,7 @@ const updateProduct = async (req, res) => {
 };
 
 // filters
+// api = http://localhost:5000/product-filters
 const productFiltersController = async (req, res) => {
   try {
     const { checked, radio } = req.body;
@@ -208,6 +209,7 @@ const productFiltersController = async (req, res) => {
 };
 
 // product count
+// api = http://localhost:5000/product-count
 const productCountController = async (req, res) => {
   try {
     const total = await productModel.find({}).estimatedDocumentCount();
@@ -226,6 +228,7 @@ const productCountController = async (req, res) => {
 };
 
 // product list base on page
+// api = http://localhost:5000//product-list/:page
 const productListController = async (req, res) => {
   try {
     const perPage = 6;
@@ -251,6 +254,7 @@ const productListController = async (req, res) => {
 };
 
 // search product
+// api = http://localhost:5000/search/:keyword
 const searchProductController = async (req, res) => {
   try {
     const { keyword } = req.params;
@@ -274,6 +278,7 @@ const searchProductController = async (req, res) => {
 };
 
 // similar products
+// api = http://localhost:5000/related-product/:pid/:cid
 const realtedProductController = async (req, res) => {
   try {
     const { pid, cid } = req.params;
@@ -300,6 +305,7 @@ const realtedProductController = async (req, res) => {
 };
 
 // get prdocyst by catgory
+// api = http://localhost:5000/product-category/:slug
 const productCategoryController = async (req, res) => {
   try {
     const category = await categoryModel.findOne({ slug: req.params.slug });
