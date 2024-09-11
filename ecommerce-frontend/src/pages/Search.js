@@ -1,8 +1,12 @@
 import React from "react";
 import Layout from "./../components/Layout/Layout";
 import { useSearch } from "../context/search";
+import { environment } from "../environment.ts"
+
 const Search = () => {
   const [values, setValues] = useSearch();
+  const apiUrl = environment.apiUrl;
+
   return (
     <Layout title={"Search results"}>
       <div className="container">
@@ -17,7 +21,7 @@ const Search = () => {
             {values?.results.map((p) => (
               <div className="card m-2" style={{ width: "18rem" }}>
                 <img
-                  src={`${process.env.REACT_APP_API}/api/product/product-photo/${p._id}`}
+                  src={`${apiUrl}/api/product/product-photo/${p._id}`}
                   className="card-img-top"
                   alt={p.name}
                 />

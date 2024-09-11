@@ -1,69 +1,115 @@
+/* Form Container */
 .form-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 100vh; /* Ensure it takes the full viewport height */
+  min-height: 100vh;
   width: 100%;
   flex-direction: column;
   background-color: #ffdee9;
   background-image: linear-gradient(0deg, #ffdee9 0%, #b5fffc 100%);
+  padding: 20px;
 }
 
 .form-container form {
   width: 400px;
   max-width: 100%;
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+  box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
   padding: 30px;
   background-color: #fff;
-  border-radius: 10px;
+  border-radius: 15px;
+  transition: box-shadow 0.3s ease-in-out, transform 0.3s;
 }
 
+.form-container form:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+}
+
+/* Form Title */
 .form-container form .title {
   text-align: center;
   margin-bottom: 20px;
   font-weight: bold;
   font-family: "Playfair Display", serif;
-  font-size: 24px;
+  font-size: 28px;
+  color: #333;
+  letter-spacing: 1.5px;
 }
 
+/* Input Fields */
 .form-container form input {
   width: 100%;
   border: none;
-  border-bottom: 1px solid #000;
-  margin-bottom: 15px;
+  border-bottom: 2px solid #000;
+  margin-bottom: 20px;
   font-size: 16px;
-  padding: 10px 5px;
+  padding: 12px 8px;
+  background-color: #f9f9f9;
+  outline: none;
+  transition: border-color 0.3s ease, background-color 0.3s ease;
 }
 
+.form-container form input:focus {
+  border-color: #ff6f61;
+  background-color: #fff;
+}
+
+/* Button Group */
 .form-container form .btn-group {
   display: flex;
   justify-content: space-between;
-  gap: 10px;
+  gap: 15px;
 }
 
-.form-container form button,
-.form-container form .btn-secondary {
+/* Primary Button */
+.form-container form button {
   flex: 1;
-  border: 1px solid black;
-  border-radius: 5px;
-  background-color: #000;
+  border: none;
+  border-radius: 30px;
+  background-color: #ff6f61;
   color: white;
-  padding: 10px 0;
+  padding: 12px 0;
+  font-size: 18px;
   text-align: center;
   cursor: pointer;
-  font-size: 16px;
-  transition: background 0.3s ease;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
 }
 
-.form-container form button:hover,
+.form-container form button:hover {
+  background: linear-gradient(to right, #ff7e5f, #feb47b);
+  box-shadow: 0 10px 20px rgba(255, 110, 97, 0.3);
+  transform: translateY(-3px);
+}
+
+/* Secondary Button */
+.form-container form .btn-secondary {
+  flex: 1;
+  border: none;
+  border-radius: 30px;
+  background-color: #434343a4;
+  color: white;
+  padding: 12px 0;
+  font-size: 18px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+}
+
 .form-container form .btn-secondary:hover {
   background: linear-gradient(to right, #434343, #000000);
+  box-shadow: 0 10px 20px rgba(67, 67, 67, 0.3);
+  transform: translateY(-3px);
 }
 
-.form-container form .btn-secondary {
-  background-color: #434343a4;
+/* Form Input Placeholder */
+.form-container form input::placeholder {
+  font-size: 14px;
+  color: #999;
 }
 
-.form-container form .btn-secondary:hover {
-  background-color: #434343;
+/* Enhanced Form Submit Button */
+.form-container form button:active,
+.form-container form .btn-secondary:active {
+  transform: scale(0.98);
+  box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
 }

@@ -4,6 +4,8 @@ import Layout from "./../../components/Layout/Layout";
 import { useAuth } from "../../context/auth";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { environment } from "../../environment.ts"
+
 const Profile = () => {
     //context
     const [auth, setAuth] = useAuth();
@@ -13,6 +15,8 @@ const Profile = () => {
     const [password, setPassword] = useState("");
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
+
+    const apiUrl = environment.apiUrl;
 
     //get user data
     useEffect(() => {
@@ -27,7 +31,7 @@ const Profile = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const { data } = await axios.put(`${process.env.REACT_APP_API}/api/auth/profile`, {
+            const { data } = await axios.put(`${apiUrl}/api/auth/profile`, {
                 name,
                 email,
                 password,

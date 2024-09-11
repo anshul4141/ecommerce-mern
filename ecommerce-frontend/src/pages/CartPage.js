@@ -4,11 +4,14 @@ import { useCart } from "../context/cart";
 import { useAuth } from "../context/auth";
 import { useNavigate } from "react-router-dom";
 import "../styles/CartStyles.css";
+import {environment} from "../environment.ts"
 
 const CartPage = () => {
   const [auth, setAuth] = useAuth();
   const [cart, setCart] = useCart();
   const navigate = useNavigate();
+
+  const apiUrl = environment.apiUrl;
 
   //total price
   const totalPrice = () => {
@@ -60,7 +63,7 @@ const CartPage = () => {
                 <div className="row mb-2 p-3 card flex-row">
                   <div className="col-md-4">
                     <img
-                      src={`${process.env.REACT_APP_API}/api/product/product-photo/${p._id}`}
+                      src={`${apiUrl}/api/product/product-photo/${p._id}`}
                       className="card-img-top"
                       alt={p.name}
                       width="200px"
