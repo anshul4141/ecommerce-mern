@@ -4,17 +4,13 @@ import Layout from "./../../components/Layout/Layout";
 import axios from "axios";
 import toast from "react-hot-toast";
 import { Link } from "react-router-dom";
-import {environment} from "../../environment.ts"
-
 const Products = () => {
   const [products, setProducts] = useState([]);
-
-  const apiUrl = environment.apiUrl;
 
   //getall products
   const getAllProducts = async () => {
     try {
-      const { data } = await axios.get(`${apiUrl}/api/product/get-product`);
+      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/product/get-product`);
       setProducts(data.products);
     } catch (error) {
       console.log(error);
@@ -43,7 +39,7 @@ const Products = () => {
               >
                 <div className="card m-2" style={{ width: "18rem" }}>
                   <img
-                    src={`${apiUrl}/api/product/product-photo/${p._id}`}
+                    src={`${process.env.REACT_APP_API}/api/product/product-photo/${p._id}`}
                     className="card-img-top"
                     alt={p.name}
                   />

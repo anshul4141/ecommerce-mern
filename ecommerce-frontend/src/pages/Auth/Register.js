@@ -4,7 +4,6 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
-import {environment} from '../../environment.ts'
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -14,14 +13,10 @@ const Register = () => {
     const [address, setAddress] = useState("");
     const [answer, setAnswer] = useState("");
     // form submission function
-
-    //api url
-    const apiUrl = environment.apiUrl;
-
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${apiUrl}/api/auth/register`, {
+            const res = await axios.post(`${process.env.REACT_APP_API}/api/auth/register`, {
                 name, email, password, phone, address, answer
             });
 

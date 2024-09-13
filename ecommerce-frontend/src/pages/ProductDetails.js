@@ -3,7 +3,6 @@ import Layout from "./../components/Layout/Layout";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import "../styles/ProductDetailsStyles.css";
-import { environment } from "../environment.ts"
 import { useCart } from "../context/cart";
 import toast from "react-hot-toast";
 
@@ -15,8 +14,6 @@ const ProductDetails = () => {
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [cart, setCart] = useCart();
 
-  const apiUrl = environment.apiUrl;
-
   //initalp details
   useEffect(() => {
     if (params?.slug) getProduct();
@@ -25,7 +22,7 @@ const ProductDetails = () => {
   const getProduct = async () => {
     try {
       const { data } = await axios.get(
-        `${apiUrl}/api/product/get-product/${params.slug}`
+        `${process.env.REACT_APP_API}/api/product/get-product/${params.slug}`
       );
       setProduct(data?.product);
       getSimilarProduct(data?.product._id, data?.product.category._id);
@@ -37,7 +34,7 @@ const ProductDetails = () => {
   const getSimilarProduct = async (pid, cid) => {
     try {
       const { data } = await axios.get(
-        `${apiUrl}/api/product/related-product/${pid}/${cid}`
+        `${process.env.REACT_APP_API}/api/product/related-product/${pid}/${cid}`
       );
       setRelatedProducts(data?.products);
     } catch (error) {
@@ -49,7 +46,7 @@ const ProductDetails = () => {
       <div className="row container product-details">
         <div className="col-md-6">
           <img
-            src={`${apiUrl}/api/product/product-photo/${product._id}`}
+            src={`${process.env.REACT_APP_API}/api/product/product-photo/${product._id}`}
             className="card-img-top"
             alt={product.name}
             height="300"
@@ -91,7 +88,7 @@ const ProductDetails = () => {
           {relatedProducts?.map((p) => (
             <div className="card m-2" key={p._id}>
               <img
-                src={`${apiUrl}/api/product/product-photo/${p._id}`}
+                src={`${process.env.REACT_APP_API}/api/product/product-photo/${p._id}`}
                 className="card-img-top"
                 alt={p.name}
               />

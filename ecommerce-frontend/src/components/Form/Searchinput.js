@@ -2,19 +2,15 @@ import React from "react";
 import { useSearch } from "../../context/search";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import {environment} from "../../environment.ts"
-
 const SearchInput = () => {
   const [values, setValues] = useSearch();
   const navigate = useNavigate();
-
-  const apiUrl = environment.apiUrl;
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data } = await axios.get(
-        `${apiUrl}/api/product/search/${values.keyword}`
+        `${process.env.REACT_APP_API}/api/product/search/${values.keyword}`
       );
       setValues({ ...values, results: data });
       navigate("/search");

@@ -5,7 +5,6 @@ import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
 import { useAuth } from "../../context/auth";
-import {environment} from '../../environment.ts'
 
 const Login = () => {
     const [email, setEmail] = useState("");
@@ -14,14 +13,11 @@ const Login = () => {
 
     const navigate = useNavigate();
 
-     //api url
-     const apiUrl = environment.apiUrl;
-
     // form submission function
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${apiUrl}/api/auth/login`, {
+            const res = await axios.post(`${process.env.REACT_APP_API}/api/auth/login`, {
                 email, password
             });
 
