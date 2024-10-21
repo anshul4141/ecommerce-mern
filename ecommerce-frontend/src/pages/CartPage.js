@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import Layout from "./../components/Layout/Layout";
 import { useCart } from "../context/cart";
 import { useAuth } from "../context/auth";
 import { useNavigate } from "react-router-dom";
-import DropIn from "braintree-web-drop-in-react";
+import GooglePayButton from '@google-pay/button-react';
 import axios from "axios";
 import toast from "react-hot-toast";
 import "../styles/CartStyles.css";
@@ -11,13 +11,10 @@ import "../styles/CartStyles.css";
 const CartPage = () => {
   const [auth, setAuth] = useAuth();
   const [cart, setCart] = useCart();
-  const [clientToken, setClientToken] = useState(null); // Use null initially
-  const [instance, setInstance] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [loadingToken, setLoadingToken] = useState(true); // New state to track token loading
   const navigate = useNavigate();
 
-  // Total price
+  // Total price calculation
   const totalPrice = () => {
     try {
       let total = 0;
@@ -26,14 +23,14 @@ const CartPage = () => {
       });
       return total.toLocaleString("en-IN", {
         style: "currency",
-        currency: "INR", 
+        currency: "INR",
       });
     } catch (error) {
       console.log(error);
     }
   };
 
-  // Delete item
+  // Delete item from cart
   const removeCartItem = (pid) => {
     try {
       let myCart = [...cart];
@@ -46,35 +43,14 @@ const CartPage = () => {
     }
   };
 
-  // Get payment gateway token
-  const getToken = async () => {
-    try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/product/braintree/token`);
-      setClientToken(data?.clientToken);
-      setLoadingToken(false); // Token has finished loading
-      console.log("Client Token: ", data?.clientToken);
-    } catch (error) {
-      console.log(error);
-      setLoadingToken(false); // Even if an error occurs, stop loading
-    }
-  };
-
-  useEffect(() => {
-    getToken();
-  }, [auth?.token]);
-
-  // Handle payments (dummy or actual)
-  const handlePayment = async () => {
-    if (!instance) {
-      toast.error("Payment instance is not ready yet.");
-      return;
-    }
+  // Handle Google Pay success
+  const handleGooglePaySuccess = async (paymentData) => {
     try {
       setLoading(true);
-      const { nonce } = await instance.requestPaymentMethod();
-      console.log("Nonce: ", nonce);
-      const { data } = await axios.post(`${process.env.REACT_APP_API}/api/product/braintree/payment`, {
-        nonce,
+      const { paymentMethodData } = paymentData;
+      const token = paymentMethodData.tokenizationData.token;
+      const { data } = await axios.post(`http://localhost:5000/api/product/googlepay/payment`, {
+        token,
         cart,
       });
       setLoading(false);
@@ -85,6 +61,7 @@ const CartPage = () => {
     } catch (error) {
       console.log(error);
       setLoading(false);
+      toast.error("Payment failed.");
     }
   };
 
@@ -94,12 +71,10 @@ const CartPage = () => {
         <div className="row">
           <div className="col-md-12">
             <h1 className="text-center bg-light p-2 mb-1">
-              {!auth?.user ? "Hello Guest" : `Hello  ${auth?.token && auth?.user?.name}`}
+              {!auth?.user ? "Hello Guest" : `Hello ${auth?.token && auth?.user?.name}`}
               <p className="text-center">
                 {cart?.length
-                  ? `You Have ${cart.length} items in your cart ${
-                      auth?.token ? "" : "please login to checkout !"
-                    }`
+                  ? `You have ${cart.length} items in your cart${auth?.token ? "" : ", please login to checkout!"}`
                   : "Your Cart Is Empty"}
               </p>
             </h1>
@@ -112,7 +87,7 @@ const CartPage = () => {
                 <div className="row card flex-row" key={p._id}>
                   <div className="col-md-4">
                     <img
-                      src={`${process.env.REACT_APP_API}/api/product/product-photo/${p._id}`}
+                      src={`http://localhost:5000/api/product/product-photo/${p._id}`}
                       className="card-img-top"
                       alt={p.name}
                       width="100%"
@@ -122,7 +97,7 @@ const CartPage = () => {
                   <div className="col-md-4">
                     <p>{p.name}</p>
                     <p>{p.description.substring(0, 30)}</p>
-                    <p>Price : {p.price}</p>
+                    <p>Price: {p.price}</p>
                   </div>
                   <div className="col-md-4 cart-remove-btn">
                     <button
@@ -140,6 +115,7 @@ const CartPage = () => {
               <p>Total | Checkout | Payment</p>
               <hr />
               <h4>Total: {totalPrice()}</h4>
+
               {auth?.user?.address ? (
                 <>
                   <div className="mb-3">
@@ -166,9 +142,7 @@ const CartPage = () => {
                     <button
                       className="btn btn-outline-warning"
                       onClick={() =>
-                        navigate("/login", {
-                          state: "/cart",
-                        })
+                        navigate("/login", { state: "/cart" })
                       }
                     >
                       Please Login to checkout
@@ -177,30 +151,49 @@ const CartPage = () => {
                 </div>
               )}
 
-              <div className="mt-2">
-                {loadingToken ? (
-                  <h4>Loading Payment Gateway...</h4>
-                ) : (
-                  <>
-                    {clientToken && (
-                      <DropIn
-                        options={{
-                          authorization: clientToken,
-                          paypal: { flow: "vault" },
-                        }}
-                        onInstance={(instance) => setInstance(instance)}
-                      />
-                    )}
-                    <button
-                      className="btn btn-primary mt-2"
-                      onClick={handlePayment}
-                      disabled={!instance || loading}
-                    >
-                      {loading ? "Processing..." : "Make Payment"}
-                    </button>
-                  </>
-                )}
-              </div>
+              {/* Google Pay Integration */}
+              {cart?.length && auth?.token ? (  // Check if user is logged in
+                <div className="mt-3">
+                  <GooglePayButton
+                    environment="TEST"
+                    buttonSizeMode="fill"  // This will make the button responsive
+                    paymentRequest={{
+                      apiVersion: 2,
+                      apiVersionMinor: 0,
+                      allowedPaymentMethods: [{
+                        type: 'CARD',
+                        parameters: {
+                          allowedAuthMethods: ['PAN_ONLY', 'CRYPTOGRAM_3DS'],
+                          allowedCardNetworks: ['MASTERCARD', 'VISA'],
+                        },
+                        tokenizationSpecification: {
+                          type: 'PAYMENT_GATEWAY',
+                          parameters: {
+                            gateway: 'stripe',
+                            'stripe:version': '2018-10-31',
+                            'stripe:publishableKey': 'your-publishable-key',
+                          },
+                        },
+                      }],
+                      merchantInfo: {
+                        merchantId: 'YOUR_MERCHANT_ID',
+                        merchantName: 'Your Store',
+                      },
+                      transactionInfo: {
+                        totalPriceStatus: 'FINAL',
+                        totalPriceLabel: 'Total',
+                        totalPrice: totalPrice().replace(/[^0-9.-]+/g, ""),
+                        currencyCode: 'INR',
+                        countryCode: 'IN',
+                      },
+                    }}
+                    onLoadPaymentData={handleGooglePaySuccess}
+                    className="google-pay-button"
+                  />
+                </div>
+              ) : (
+                <p className="text-danger mt-3">Please log in to proceed with payment.</p>
+              )}
             </div>
           </div>
         </div>

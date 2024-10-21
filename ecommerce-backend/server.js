@@ -4,6 +4,7 @@ const dotenv = require('dotenv');
 const morgan = require('morgan');
 const connectDB = require('./config/db');
 const authRoutes = require('./routes/authRoutes');
+const userRoutes = require('./routes/userRoutes');
 const categoryRoutes = require('./routes/categoryRoutes');
 const productRoutes = require('./routes/productRoutes');
 const cors = require('cors');
@@ -24,7 +25,8 @@ app.use(morgan('dev'));
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/category', categoryRoutes);
-app.use('/api/product', productRoutes)
+app.use('/api/product', productRoutes);
+app.use('/api/user', userRoutes);
 
 app.get('/', (req, res) => {
     res.send({ message: 'Welcome to my app' });

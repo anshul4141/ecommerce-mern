@@ -4,17 +4,8 @@ const orderModel = require('../models/orderModel');
 const fs = require('fs');
 const slugify = require('slugify');
 const dotenv = require('dotenv');
-const braintree = require('braintree');
-
 dotenv.config();
-
-//payment gateway
-var gateway = new braintree.BraintreeGateway({
-  environment: braintree.Environment.Sandbox,
-  merchantId: process.env.BRAINTREE_MERCHANT_ID,
-  publicKey: process.env.BRAINTREE_PUBLIC_KEY,
-  privateKey: process.env.BRAINTREE_PRIVATE_KEY,
-});
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Use your payment processor's SDK
 
 
 // Create product controller
@@ -242,7 +233,7 @@ const productCountController = async (req, res) => {
 // api = http://localhost:5000//product-list/:page
 const productListController = async (req, res) => {
   try {
-    const perPage = 6;
+    const perPage = 8;
     const page = req.params.page ? req.params.page : 1;
     const products = await productModel
       .find({})
@@ -336,53 +327,39 @@ const productCategoryController = async (req, res) => {
   }
 };
 
-//payment gateway api
-//token
-const braintreeTokenController = async (req, res) => {
+// Google Pay token controller (handling payment token)
+const googlePayPaymentController = async (req, res) => {
   try {
-    gateway.clientToken.generate({}, function (err, response) {
-      if (err) {
-        res.status(500).send(err);
-      } else {
-        res.send(response);
-      }
-    });
-  } catch (error) {
-    console.log(error);
-  }
-};
-
-//payment
-const brainTreePaymentController = async (req, res) => {
-  try {
-    const { nonce, cart } = req.body;
+    const { token, cart } = req.body; // token from Google Pay API
     let total = 0;
-    cart.map((i) => {
-      total += i.price;
+    cart.map((item) => {
+      total += item.price;
     });
-    let newTransaction = gateway.transaction.sale(
-      {
-        amount: total,
-        paymentMethodNonce: nonce,
-        options: {
-          submitForSettlement: true,
-        },
+
+    // Use token to process payment with your payment processor
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount: total * 100, // Stripe expects the amount in cents (for INR, multiply by 100)
+      currency: 'inr',
+      payment_method_data: {
+        type: 'card',
+        token: token, // Token from Google Pay
       },
-      function (error, result) {
-        if (result) {
-          const order = new orderModel({
-            products: cart,
-            payment: result,
-            buyer: req.user._id,
-          }).save();
-          res.json({ ok: true });
-        } else {
-          res.status(500).send(error);
-        }
-      }
-    );
+      confirm: true,
+    });
+
+    if (paymentIntent.status === 'succeeded') {
+      const order = new orderModel({
+        products: cart,
+        payment: paymentIntent,
+        buyer: req.user._id,
+      }).save();
+      res.json({ success: true });
+    } else {
+      res.status(500).send({ error: 'Payment failed' });
+    }
   } catch (error) {
     console.log(error);
+    res.status(500).send({ error: 'Payment processing error', details: error });
   }
 };
 
@@ -400,6 +377,5 @@ module.exports = {
   searchProductController,
   realtedProductController,
   productCategoryController,
-  braintreeTokenController,
-  brainTreePaymentController,
+  googlePayPaymentController
 };

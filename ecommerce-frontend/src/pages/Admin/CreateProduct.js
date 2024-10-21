@@ -15,7 +15,6 @@ const CreateProduct = () => {
     const [price, setPrice] = useState("");
     const [category, setCategory] = useState("");
     const [quantity, setQuantity] = useState("");
-    const [shipping, setShipping] = useState("");
     const [photo, setPhoto] = useState("");
 
     //get all category
@@ -63,7 +62,7 @@ const CreateProduct = () => {
     };
 
     return (
-        <Layout title={"Dashboard - Create Product"}>
+        <Layout>
             <div className="container-fluid m-3 p-3 dashboard">
                 <div className="row">
                     <div className="col-md-3">
@@ -148,21 +147,6 @@ const CreateProduct = () => {
                                     className="form-control"
                                     onChange={(e) => setQuantity(e.target.value)}
                                 />
-                            </div>
-                            <div className="mb-3">
-                                <Select
-                                    bordered={false}
-                                    placeholder="Select Shipping "
-                                    size="large"
-                                    showSearch
-                                    className="form-select mb-3"
-                                    onChange={(value) => {
-                                        setShipping(value);
-                                    }}
-                                >
-                                    <Option value="0">No</Option>
-                                    <Option value="1">Yes</Option>
-                                </Select>
                             </div>
                             <div className="mb-3">
                                 <button className="btn btn-primary" onClick={handleCreate}>

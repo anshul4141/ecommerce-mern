@@ -1,5 +1,4 @@
-@import url("https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=Poppins:wght@300;400&display=swap");
-
+/* Global CSS */
 * {
   margin: 0;
   padding: 0;
@@ -8,18 +7,20 @@
 }
 
 body {
-  font-family: "Poppins", sans-serif;
-  background-color: #f3f4f6;
+  background: linear-gradient(to right, #a1c4fd, #c2e9fb, #b2fefa, #89f7fe);
   color: #333;
   line-height: 1.6;
 }
 
 /* Navbar CSS */
 .navbar {
-  font-family: "Poppins", sans-serif;
-  font-size: 17px;
-  line-height: 26px;
-  text-transform: uppercase;
+  position: fixed; /* Added to fix the navbar at the top */
+  top: 0; /* Ensures the navbar stays at the very top */
+  width: 100%; /* Makes the navbar span the entire width */
+  z-index: 1000; /* Keeps the navbar on top of other elements */
+  font-size: 15px; /* Reduced the font size from 17px to 15px */
+  line-height: 24px; /* Adjusted line height to match the new font size */
+  text-transform: none; /* Changed from uppercase to normal case */
   box-shadow: 0 8px 6px -6px rgba(0, 0, 0, 0.15);
   background-color: #fff;
   border-bottom: 1px solid #ddd;
@@ -32,7 +33,6 @@ body {
 }
 
 .nav-link {
-  font-weight: 300 !important;
   padding: 10px 15px;
   transition: color 0.3s ease-in-out;
 }
@@ -47,8 +47,6 @@ body {
 }
 
 .navbar-brand {
-  font-weight: 700;
-  font-family: "Playfair Display", serif;
   letter-spacing: 3px;
   color: #333;
   transition: color 0.3s ease-in-out;
@@ -102,7 +100,6 @@ body {
   text-decoration: none;
   color: #ffffff;
   padding: 10px;
-  font-weight: 300;
   transition: color 0.3s ease-in-out, border-bottom 0.3s;
 }
 
@@ -132,14 +129,12 @@ body {
 
 .pnf-title {
   font-size: 100px;
-  font-weight: 700;
   color: #ff6f61;
   animation: fadeInDown 1s ease-in-out;
   text-shadow: 2px 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 .pnf-heading {
-  font-weight: normal;
   font-size: 24px;
   color: #555;
   animation: fadeInUp 1s ease-in-out;
@@ -209,7 +204,6 @@ body {
 .product-link {
   text-decoration: none !important;
   color: black !important;
-  font-weight: 400;
   transition: color 0.3s ease-in-out;
 }
 

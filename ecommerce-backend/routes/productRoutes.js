@@ -12,8 +12,7 @@ const {
   searchProductController,
   realtedProductController,
   productCategoryController,
-  braintreeTokenController,
-  brainTreePaymentController
+  googlePayPaymentController
 } = require('../controllers/productController');
 const { isAdmin, requireSignIn } = require('../middlewares/authMiddleware');
 const formidable = require('express-formidable');
@@ -67,11 +66,7 @@ router.get('/related-product/:pid/:cid', realtedProductController);
 //category wise product
 router.get('/product-category/:slug', productCategoryController);
 
-//payments routes
-//token
-router.get("/braintree/token", braintreeTokenController);
+router.post('/googlepay/payment', googlePayPaymentController);
 
-//payments
-router.post("/braintree/payment", requireSignIn, brainTreePaymentController);
 
 module.exports = router;

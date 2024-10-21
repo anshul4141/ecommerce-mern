@@ -1,20 +1,40 @@
-.banner-img {
-  margin-top: 60px;
-}
-
-.home-page h1 {
-  color: gray;
-  font-family: "Playfair Display", serif;
-}
-
+/* Home Page Background with Linear Gradient */
 .home-page {
   display: flex;
   flex-wrap: wrap;
+  background: linear-gradient(135deg, #e0eafc, #cfdef3); /* Light blue gradient */
+  padding: 20px;
+  border-radius: 10px;
+  justify-content: center; /* Center the cards */
 }
+
+.a-price-symbol {
+  font-size: 0.8em; /* Make the symbol slightly smaller */
+  vertical-align: super; /* Position it higher */
+  margin-right: 2px; /* Add a little space between the symbol and the price */
+}
+
+.a-price-whole {
+  font-size: 1.2em; /* Adjust the font size for the whole price */
+  font-weight: bold; /* Make the price bold for emphasis */
+  color: #333; /* Set a dark color for better readability */
+}
+
+
+/* Card Styling */
 .home-page .card {
   background-color: rgba(128, 128, 128, 0.097);
-  width: 18rem;
+  width: 14rem; /* Reduced the width to make cards smaller */
+  margin: 10px; /* Added margin to space out the cards */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Slight shadow for a lifted effect */
+  border-radius: 8px; /* Rounded corners */
+  transition: transform 0.3s ease; /* Smooth transition effect on hover */
 }
+
+.home-page .card:hover {
+  transform: scale(1.05); /* Slightly increase the size on hover */
+}
+
 .home-page .card-name-price {
   display: flex;
   flex-direction: row;
@@ -25,6 +45,7 @@
   color: green;
   font-weight: bold;
 }
+
 .home-page button {
   border-radius: 0;
   width: 100%;
@@ -38,16 +59,19 @@
   color: rgb(90, 89, 89);
 }
 
-.home-page .card img:hover {
-  transform: scale(0.9);
+.home-page .card-img-top {
+  height: 200px !important; /* Reduced the image height to fit the smaller card size */
+  object-fit: cover; /* Ensures the image covers the area without distortion */
 }
 
-.home-page .card-img-top {
-  height: 300px !important;
+/* Filters Section Background with Linear Gradient */
+.filters {
+  background: linear-gradient(135deg, #f3e6e8, #fad0c4); /* Light pink gradient */
+  padding: 20px;
+  border-radius: 10px;
+  margin-top: 20px;
 }
-/* ==================
-filters
-============== */
+
 .filters h4 {
   margin-top: 100px;
   color: gray !important;
@@ -61,6 +85,7 @@ filters
 .ant-checkbox-wrapper {
   margin: 2px;
 }
+
 .ant-radio-wrapper {
   margin-bottom: 5px !important;
   margin-left: 10px;

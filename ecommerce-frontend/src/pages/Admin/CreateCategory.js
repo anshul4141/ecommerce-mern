@@ -51,44 +51,44 @@ const CreateCategory = () => {
     getAllCategory();
   }, []);
 
-//update category
-const handleUpdate = async (e) => {
-  e.preventDefault();
-  try {
-    const { data } = await axios.put(
-      `${process.env.REACT_APP_API}/api/category/update-category/${selected._id}`,
-      { name: updatedName }
-    );
-    if (data?.success) {
-      toast.success(`${updatedName} is updated`);
-      setSelected(null);
-      setUpdatedName("");
-      setVisible(false);
-      getAllCategory();
-    } else {
-      toast.error(data.message);
+  //update category
+  const handleUpdate = async (e) => {
+    e.preventDefault();
+    try {
+      const { data } = await axios.put(
+        `${process.env.REACT_APP_API}/api/category/update-category/${selected._id}`,
+        { name: updatedName }
+      );
+      if (data?.success) {
+        toast.success(`${updatedName} is updated`);
+        setSelected(null);
+        setUpdatedName("");
+        setVisible(false);
+        getAllCategory();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
-};
-//delete category
-const handleDelete = async (pId) => {
-  try {
-    const { data } = await axios.delete(
-      `${process.env.REACT_APP_API}/api/category/delete-category/${pId}`
-    );
-    if (data.success) {
-      toast.success(`category is deleted`);
+  };
+  //delete category
+  const handleDelete = async (pId) => {
+    try {
+      const { data } = await axios.delete(
+        `${process.env.REACT_APP_API}/api/category/delete-category/${pId}`
+      );
+      if (data.success) {
+        toast.success(`category is deleted`);
 
-      getAllCategory();
-    } else {
-      toast.error(data.message);
+        getAllCategory();
+      } else {
+        toast.error(data.message);
+      }
+    } catch (error) {
+      toast.error("Somtihing went wrong");
     }
-  } catch (error) {
-    toast.error("Somtihing went wrong");
-  }
-};
+  };
 
   return (
     <Layout>
@@ -127,8 +127,7 @@ const handleDelete = async (pId) => {
                               setUpdatedName(c.name);
                               setSelected(c);
                             }}
-                          >
-                            Edit
+                          ><i className="fas fa-edit"></i>
                           </button>
                           <button
                             className="btn btn-danger ms-2"
@@ -136,7 +135,7 @@ const handleDelete = async (pId) => {
                               handleDelete(c._id);
                             }}
                           >
-                            Delete
+                            <i className="fas fa-trash-alt"></i>
                           </button>
                         </td>
                       </tr>

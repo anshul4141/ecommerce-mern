@@ -5,6 +5,13 @@
   background-color: #f9f9f9;
 }
 
+.a-price-symbol {
+  font-size: 0.8em; /* Make the symbol slightly smaller */
+  vertical-align: super; /* Position it higher */
+  margin-right: 2px; /* Add a little space between the symbol and the price */
+}
+
+
 /* Cart Page Title */
 .cart-page h1 {
   padding: 20px;
@@ -98,4 +105,16 @@
 .cart-page .cart-summary button:hover {
   background-color: #333;
   transform: translateY(-2px);
+}
+
+.google-pay-button {
+  width: 100%;  /* Make it fill the available width */
+  height: 50px;  /* Set a consistent height */
+  margin-top: 20px;
+  border-radius: 8px;  /* Make the corners rounded */
+}
+
+.google-pay-button iframe {
+  width: 100%;
+  height: 100%;
 }
