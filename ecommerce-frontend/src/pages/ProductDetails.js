@@ -4,6 +4,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 import { useCart } from "../context/cart";
 import toast from "react-hot-toast";
+import { environment } from "../environment.ts";
 
 const ProductDetails = () => {
   const params = useParams();
@@ -11,6 +12,7 @@ const ProductDetails = () => {
   const [product, setProduct] = useState({});
   const [relatedProducts, setRelatedProducts] = useState([]);
   const [cart, setCart] = useCart();
+  const apiUrl = environment.apiUrl;
 
   useEffect(() => {
     if (params?.slug) getProduct();
@@ -19,7 +21,7 @@ const ProductDetails = () => {
   const getProduct = async () => {
     try {
       const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/product/get-product/${params.slug}`
+        `${apiUrl}/api/product/get-product/${params.slug}`
       );
       setProduct(data?.product);
       getSimilarProduct(data?.product._id, data?.product.category._id);
@@ -31,7 +33,7 @@ const ProductDetails = () => {
   const getSimilarProduct = async (pid, cid) => {
     try {
       const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/product/related-product/${pid}/${cid}`
+        `${apiUrl}/api/product/related-product/${pid}/${cid}`
       );
       setRelatedProducts(data?.products);
     } catch (error) {
@@ -44,7 +46,7 @@ const ProductDetails = () => {
       <div className="row container product-details" style={{ marginTop: "120px" }}>
         <div className="col-md-6" style={{ display: "flex", justifyContent: "center" }}>
           <img
-            src={`${process.env.REACT_APP_API}/api/product/product-photo/${product._id}`}
+            src={`${apiUrl}/api/product/product-photo/${product._id}`}
             className="img-fluid"
             alt={product.name}
             style={{
@@ -108,7 +110,7 @@ const ProductDetails = () => {
               }}
             >
               <img
-                src={`${process.env.REACT_APP_API}/api/product/product-photo/${p._id}`}
+                src={`${apiUrl}/api/product/product-photo/${p._id}`}
                 className="card-img-top"
                 alt={p.name}
                 style={{

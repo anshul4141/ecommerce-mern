@@ -4,11 +4,15 @@ import { useSearch } from "../context/search";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/cart";
 import toast from "react-hot-toast";
+import { environment } from "../environment.ts";
+
 
 const Search = () => {
   const [values] = useSearch();
   const navigate = useNavigate();
   const [cart, setCart] = useCart();
+  const apiUrl = environment.apiUrl;
+
 
   return (
     <Layout title={"Search results"}>
@@ -36,7 +40,7 @@ const Search = () => {
                 }}
               >
                 <img
-                  src={`${process.env.REACT_APP_API}/api/product/product-photo/${p._id}`}
+                  src={`${apiUrl}/api/product/product-photo/${p._id}`}
                   className="card-img-top"
                   alt={p.name}
                   style={{

@@ -5,6 +5,8 @@ import { useNavigate, Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
 import { useAuth } from "../../context/auth";
+import { environment } from "../../environment.ts";
+
 
 const Login = () => {
   const [email, setEmail] = useState("");
@@ -13,6 +15,8 @@ const Login = () => {
   const [emailError, setEmailError] = useState("");
   const [passwordError, setPasswordError] = useState("");
   const navigate = useNavigate();
+  const apiUrl = environment.apiUrl;
+
 
   // form submission function
   const handleSubmit = async (e) => {
@@ -39,7 +43,7 @@ const Login = () => {
     }
 
     try {
-      const res = await axios.post(`http://localhost:5000/api/auth/login`, {
+      const res = await axios.post(`${apiUrl}/api/auth/login`, {
         email,
         password,
       });

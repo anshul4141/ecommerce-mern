@@ -4,8 +4,16 @@ const orderModel = require('../models/orderModel');
 const fs = require('fs');
 const slugify = require('slugify');
 const dotenv = require('dotenv');
+const Razorpay = require('razorpay');
+const crypto = require('crypto');
+
 dotenv.config();
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY); // Use your payment processor's SDK
+
+const razorpay = new Razorpay({
+  key_id: 'YOUR_RAZORPAY_KEY_ID',
+  key_secret: 'YOUR_RAZORPAY_SECRET_KEY',
+});
 
 
 // Create product controller
@@ -363,6 +371,43 @@ const googlePayPaymentController = async (req, res) => {
   }
 };
 
+// Razorpay Order Creation Endpoint
+const createOrder = async (req, res) => {
+  try {
+      const { amount } = req.body;
+      console.log('amount ===> ', amount);
+      const options = {
+          amount: amount * 100, // Convert to smallest currency unit (paise)
+          currency: 'INR',
+          receipt: `receipt_${Date.now()}`
+      };
+      const order = await razorpay.orders.create(options);
+      console.log('order ===> ', order);
+      res.json(order);
+  } catch (error) {
+      console.error("Error creating Razorpay order:", error);
+      res.status(500).json({ message: 'Failed to create Razorpay order' });
+  }
+};
+
+// Razorpay Payment Verification Endpoint
+const verifyPayment = (req, res) => {
+  try {
+      const { order_id, payment_id, signature } = req.body;
+      const generated_signature = crypto.createHmac('sha256', razorpay.key_secret)
+          .update(`${order_id}|${payment_id}`)
+          .digest('hex');
+
+      if (generated_signature === signature) {
+          res.json({ success: true });
+      } else {
+          res.status(400).json({ success: false, message: 'Payment verification failed' });
+      }
+  } catch (error) {
+      console.error("Error verifying Razorpay payment:", error);
+      res.status(500).json({ message: 'Verification error' });
+  }
+};
 
 module.exports = {
   addProduct,
@@ -377,5 +422,7 @@ module.exports = {
   searchProductController,
   realtedProductController,
   productCategoryController,
-  googlePayPaymentController
+  googlePayPaymentController,
+  createOrder,
+  verifyPayment
 };

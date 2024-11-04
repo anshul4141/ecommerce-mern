@@ -12,7 +12,9 @@ const {
   searchProductController,
   realtedProductController,
   productCategoryController,
-  googlePayPaymentController
+  googlePayPaymentController,
+  createOrder,
+  verifyPayment
 } = require('../controllers/productController');
 const { isAdmin, requireSignIn } = require('../middlewares/authMiddleware');
 const formidable = require('express-formidable');
@@ -67,6 +69,10 @@ router.get('/related-product/:pid/:cid', realtedProductController);
 router.get('/product-category/:slug', productCategoryController);
 
 router.post('/googlepay/payment', googlePayPaymentController);
+
+router.post('/razorpay/create-order', createOrder);
+
+router.post('/razorpay/verify', verifyPayment);
 
 
 module.exports = router;

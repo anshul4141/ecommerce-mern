@@ -4,11 +4,15 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
+import { environment } from "../../environment.ts";
+
 
 const ForgotPasssword = () => {
     const [email, setEmail] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [answer, setAnswer] = useState("");
+    const apiUrl = environment.apiUrl;
+
 
     const navigate = useNavigate();
 
@@ -16,7 +20,7 @@ const ForgotPasssword = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            const res = await axios.post(`${process.env.REACT_APP_API}/api/auth/forgot-password`, {
+            const res = await axios.post(`${apiUrl}/api/auth/forgot-password`, {
                 email,
                 newPassword,
                 answer,

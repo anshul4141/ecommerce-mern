@@ -7,12 +7,14 @@ import GooglePayButton from '@google-pay/button-react';
 import axios from "axios";
 import toast from "react-hot-toast";
 import "../styles/CartStyles.css";
+import { environment } from "../environment.ts";
 
 const CartPage = () => {
   const [auth, setAuth] = useAuth();
   const [cart, setCart] = useCart();
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const apiUrl = environment.apiUrl;
 
   // Total price calculation
   const totalPrice = () => {
@@ -49,7 +51,7 @@ const CartPage = () => {
       setLoading(true);
       const { paymentMethodData } = paymentData;
       const token = paymentMethodData.tokenizationData.token;
-      const { data } = await axios.post(`http://localhost:5000/api/product/googlepay/payment`, {
+      const { data } = await axios.post(`${apiUrl}/api/product/googlepay/payment`, {
         token,
         cart,
       });
@@ -62,6 +64,57 @@ const CartPage = () => {
       console.log(error);
       setLoading(false);
       toast.error("Payment failed.");
+    }
+  };
+
+  // Handle Razorpay Payment
+  const handleRazorpayPayment = async () => {
+    try {
+      const amount = totalPrice().replace(/[^0-9.-]+/g, ""); // Remove non-numeric characters
+      const { data: order } = await axios.post(`${apiUrl}/api/product/razorpay/create-order`, { amount });
+
+      const options = {
+        key: 'YOUR_RAZORPAY_KEY_ID',
+        amount: order.amount,
+        currency: order.currency,
+        name: 'Your Store',
+        description: 'Thank you for your purchase!',
+        order_id: order.id,
+        handler: async (response) => {
+          const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = response;
+          const verificationPayload = {
+            order_id: razorpay_order_id,
+            payment_id: razorpay_payment_id,
+            signature: razorpay_signature,
+          };
+
+          // Verify payment with backend
+          const verificationResponse = await axios.post(`${apiUrl}/api/product/razorpay/verify`, verificationPayload);
+
+          if (verificationResponse.data.success) {
+            localStorage.removeItem("cart");
+            setCart([]);
+            navigate("/dashboard/user/orders");
+            toast.success("Payment completed successfully");
+          } else {
+            toast.error("Payment verification failed");
+          }
+        },
+        prefill: {
+          name: auth.user.name,
+          email: auth.user.email,
+          contact: auth.user.phone,
+        },
+        theme: {
+          color: '#3399cc',
+        },
+      };
+
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
+    } catch (error) {
+      console.error("Payment failed", error);
+      toast.error("Payment initiation failed");
     }
   };
 
@@ -117,18 +170,16 @@ const CartPage = () => {
               <h4>Total: {totalPrice()}</h4>
 
               {auth?.user?.address ? (
-                <>
-                  <div className="mb-3">
-                    <h4>Current Address</h4>
-                    <h5>{auth?.user?.address}</h5>
-                    <button
-                      className="btn btn-outline-warning"
-                      onClick={() => navigate("/dashboard/user/profile")}
-                    >
-                      Update Address
-                    </button>
-                  </div>
-                </>
+                <div className="mb-3">
+                  <h4>Current Address</h4>
+                  <h5>{auth?.user?.address}</h5>
+                  <button
+                    className="btn btn-outline-warning"
+                    onClick={() => navigate("/dashboard/user/profile")}
+                  >
+                    Update Address
+                  </button>
+                </div>
               ) : (
                 <div className="mb-3">
                   {auth?.token ? (
@@ -141,9 +192,7 @@ const CartPage = () => {
                   ) : (
                     <button
                       className="btn btn-outline-warning"
-                      onClick={() =>
-                        navigate("/login", { state: "/cart" })
-                      }
+                      onClick={() => navigate("/login", { state: "/cart" })}
                     >
                       Please Login to checkout
                     </button>
@@ -152,11 +201,11 @@ const CartPage = () => {
               )}
 
               {/* Google Pay Integration */}
-              {cart?.length && auth?.token ? (  // Check if user is logged in
+              {cart?.length && auth?.token && (
                 <div className="mt-3">
                   <GooglePayButton
                     environment="TEST"
-                    buttonSizeMode="fill"  // This will make the button responsive
+                    buttonSizeMode="fill"
                     paymentRequest={{
                       apiVersion: 2,
                       apiVersionMinor: 0,
@@ -191,8 +240,13 @@ const CartPage = () => {
                     className="google-pay-button"
                   />
                 </div>
-              ) : (
-                <p className="text-danger mt-3">Please log in to proceed with payment.</p>
+              )}
+
+              {/* Razorpay Integration */}
+              {cart?.length && auth?.token && (
+                <button onClick={handleRazorpayPayment} className="btn btn-primary mt-3">
+                  Pay with Razorpay
+                </button>
               )}
             </div>
           </div>

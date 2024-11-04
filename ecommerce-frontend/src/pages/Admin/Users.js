@@ -3,6 +3,8 @@ import Layout from '../../components/Layout/Layout';
 import AdminMenu from '../../components/Layout/AdminMenu';
 import axios from "axios";
 import toast from "react-hot-toast";
+import { environment } from "../../environment.ts";
+
 
 const Users = () => {
     const [users, setUsers] = useState([]);
@@ -15,6 +17,8 @@ const Users = () => {
         phone: '',
         address: '',
     });
+    const apiUrl = environment.apiUrl;
+
 
     // Search fields state
     const [searchName, setSearchName] = useState('');
@@ -58,7 +62,7 @@ const Users = () => {
     useEffect(() => {
         const fetchUsers = async () => {
             try {
-                const response = await axios.get('http://localhost:5000/api/user/searchUser');
+                const response = await axios.get(`${apiUrl}/api/user/searchUser`);
                 if (response.data.success) {
                     setUsers(response.data.users);
                     setFilteredUsers(response.data.users);
@@ -87,7 +91,7 @@ const Users = () => {
 
     const handleUpdateUser = async () => {
         try {
-            const response = await axios.put(`http://localhost:5000/api/user/updateUser/${selectedUser._id}`, formData);
+            const response = await axios.put(`${apiUrl}/api/user/updateUser/${selectedUser._id}`, formData);
             if (response.data.success) {
                 setUsers(users.map(user => user._id === selectedUser._id ? { ...user, ...formData } : user));
                 toast.success('User Updated Successfully');
@@ -102,7 +106,7 @@ const Users = () => {
         const confirmDelete = window.confirm("Are you sure you want to delete this user?");
         if (confirmDelete) {
             try {
-                const response = await axios.delete(`http://localhost:5000/api/user/deleteUser/${userId}`);
+                const response = await axios.delete(`${apiUrl}/api/user/deleteUser/${userId}`);
                 if (response.data.success) {
                     setUsers(users.filter(user => user._id !== userId));
                     setFilteredUsers(filteredUsers.filter(user => user._id !== userId));

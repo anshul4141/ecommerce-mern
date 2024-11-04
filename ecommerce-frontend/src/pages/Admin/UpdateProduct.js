@@ -5,6 +5,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 import { Select } from "antd";
 import { useNavigate, useParams } from "react-router-dom";
+import { environment } from "../../environment.ts";
+
 const { Option } = Select;
 
 const UpdateProduct = () => {
@@ -19,12 +21,14 @@ const UpdateProduct = () => {
   const [shipping, setShipping] = useState("");
   const [photo, setPhoto] = useState("");
   const [id, setId] = useState("");
+  const apiUrl = environment.apiUrl;
+
 
   //get single product
   const getSingleProduct = async () => {
     try {
       const { data } = await axios.get(
-        `${process.env.REACT_APP_API}/api/product/get-product/${params.slug}`
+        `${apiUrl}/api/product/get-product/${params.slug}`
       );
       setName(data.product.name);
       setId(data.product._id);
@@ -45,7 +49,7 @@ const UpdateProduct = () => {
   //get all category
   const getAllCategory = async () => {
     try {
-      const { data } = await axios.get(`${process.env.REACT_APP_API}/api/category/get-categories`);
+      const { data } = await axios.get(`${apiUrl}/api/category/get-categories`);
       if (data?.success) {
         setCategories(data?.category);
       }
@@ -71,7 +75,7 @@ const UpdateProduct = () => {
       photo && productData.append("photo", photo);
       productData.append("category", category);
       const { data } = axios.put(
-        `${process.env.REACT_APP_API}/api/product/update-product/${id}`,
+        `${apiUrl}/api/product/update-product/${id}`,
         productData
       );
       if (data?.success) {
@@ -92,7 +96,7 @@ const UpdateProduct = () => {
       let answer = window.prompt("Are You Sure want to delete this product ? ");
       if (!answer) return;
       const { data } = await axios.delete(
-        `${process.env.REACT_APP_API}/api/product/delete-product/${id}`
+        `${apiUrl}/api/product/delete-product/${id}`
       );
       toast.success("Product DEleted Succfully");
       navigate("/dashboard/admin/products");
@@ -153,7 +157,7 @@ const UpdateProduct = () => {
                 ) : (
                   <div className="text-center">
                     <img
-                      src={`${process.env.REACT_APP_API}/api/product/product-photo/${id}`}
+                      src={`${apiUrl}/api/product/product-photo/${id}`}
                       alt="product_photo"
                       height={"200px"}
                       className="img img-responsive"

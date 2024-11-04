@@ -4,6 +4,8 @@ import axios from "axios";
 import { Link } from "react-router-dom";
 import toast from "react-hot-toast";
 import "../../styles/AuthStyles.css";
+import { environment } from "../../environment.ts";
+
 
 const Register = () => {
     const [name, setName] = useState("");
@@ -12,6 +14,8 @@ const Register = () => {
     const [phone, setPhone] = useState("");
     const [address, setAddress] = useState("");
     const [answer, setAnswer] = useState("");
+    const apiUrl = environment.apiUrl;
+
 
     // Validation states
     const [isNameValid, setIsNameValid] = useState(true);
@@ -46,7 +50,7 @@ const Register = () => {
         }
 
         try {
-            const res = await axios.post(`http://localhost:5000/api/auth/register`, {
+            const res = await axios.post(`${apiUrl}/api/auth/register`, {
                 name, email, password, phone, address, answer
             });
 
